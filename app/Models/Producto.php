@@ -21,4 +21,10 @@ class Producto extends Model
     public function categorias(){
         return $this->belongsToMany(Categoria::class)->withTimestamps();
     }
+    public function marca(){
+        return $this->belongsTo(Marca::class);
+    }
+    public function presentacione(){
+        return $this->belongsTo(Presentacione::class);
+    }
 }
