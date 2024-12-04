@@ -2,7 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreCategoriaRequest;
+use App\Http\Requests\UpdateCategoriaRequest;
+use App\Models\Caracteristica;
+use App\Models\Categoria;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class categoriaController extends Controller
 {
@@ -13,7 +19,8 @@ class categoriaController extends Controller
      */
     public function index()
     {
-        return view('categoria.index');
+        $categorias = Categoria::with('caracteristica')->get();
+        return view('categoria.index',['categorias' => $categorias]);
     }
 
     /**
@@ -23,7 +30,7 @@ class categoriaController extends Controller
      */
     public function create()
     {
-        //
+        return view('categoria.create');
     }
 
     /**
@@ -32,9 +39,24 @@ class categoriaController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+
+    public function store(StoreCategoriaRequest $request)
     {
-        //
+        //  dd($request);
+
+        try{
+            DB::beginTransaction();
+            $caracteristica = Caracteristica::create($request->validated());//Crear registro
+            $caracteristica->categoria()->create([ //Guardar llave foranea
+                'caracteristica_id' => $caracteristica->id
+            ]);
+            DB::commit();
+        }catch(Exception $e){
+            DB::rollBack();
+        }
+
+        return redirect()->route('categorias.index')->with('success','Categoria registrada');
+
     }
 
     /**
@@ -54,9 +76,10 @@ class categoriaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Categoria $categoria)
     {
-        //
+        // dd($categoria);
+        return view('categoria.edit',['categoria'=> $categoria]);
     }
 
     /**
@@ -66,9 +89,12 @@ class categoriaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateCategoriaRequest $request, Categoria $categoria)
     {
-        //
+        Caracteristica::where('id',$categoria->caracteristica->id)
+        ->update($request->validated());
+
+        return redirect()->route('categorias.index')->with('success', 'Categoría editada');
     }
 
     /**
