@@ -14,6 +14,7 @@
 
 @if(session('success'))
 <script>
+    let message = " {{ session('success')}}"
     const Toast = Swal.mixin({
   toast: true,
   position: "top-end",
@@ -27,7 +28,7 @@
 });
 Toast.fire({
   icon: "success",
-  title: "Operación exitosa"
+  title: message
 });
 </script>
 @endif
@@ -56,6 +57,7 @@ Toast.fire({
                 <tr>
                     <th>Nombre</th>
                     <th>Descripción</th>
+                    <th>Estado</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -76,31 +78,50 @@ Toast.fire({
                     <td>{{$categoria->caracteristica->nombre}}</td>
                     <td>{{$categoria->caracteristica->descripcion}}</td> 
                     <td>
+                      @if ($categoria->caracteristica->estado == 1)
+                        <span class="fw-bolder p-1 rounded bg-success text-white ">Activo</span>
+                          
+                      @else
+                      <span class="fw-bolder p-1 rounded bg-danger text-white ">Eliminado</span>
+
+                      @endif
+                    </td>
+                    <td>
                         <div class="btn-group" role="group" aria-label="Basic mixed styles example">
                             <form action="{{ route('categorias.edit',['categoria'=>$categoria]) }}">
                                 
                                 <button type="submit" class="btn btn-warning"> Editar</button>
                             </form>
+
+                            @if ($categoria->caracteristica->estado == 1)
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmModal-{{$categoria->id}}"> Eliminar</button>
+                            @else
+                            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#confirmModal-{{$categoria->id}}"> Restaurar</button>
+                            @endif
                             
-                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal"> Eliminar</button>
                         </div>
                     </td>                  
                 </tr>
 
                 <!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="confirmModal-{{$categoria->id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Mensaje de confirmacónn</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          ...
+          {{ $categoria->caracteristica->estado == 1 ? "Seguro que quieres eliminar la categoría?" : "Seguro que quieres restaurar la categoría?" }}
+           
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save changes</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          <form action="{{ route('categorias.destroy', ['categoria'=> $categoria->id])}}" method="POST">
+            @method("DELETE")
+            @csrf
+            <button type="submit" class="btn btn-danger">Confirmar</button>
+          </form>
         </div>
       </div>
     </div>
