@@ -20,7 +20,10 @@ class productoController extends Controller
      */
     public function index()
     {
-        return view('producto.index');
+      $productos = Producto::with(['categorias.caracteristica','marca.caracteristica','presentacione.caracteristica'])
+      ->latest()->get();
+    //   dd($productos);
+        return view('producto.index',compact('productos'));
     }
 
     /**
