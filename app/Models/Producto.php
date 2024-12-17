@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Producto extends Model
 {
@@ -35,8 +36,12 @@ class Producto extends Model
         //Gestionar todo lo que tenga que ver con el guardado de la img
         $file = $image;
         $name = time().$file->getClientOriginalName();
-        $file->move(public_path().'/img/productos/',$name);//Poner los / para que no de algun error
 
+        //$file->move(public_path().'/img/productos/',$name);//Poner los / para que no de algun error
+        Storage::putFileAs('/public/productos/',$file,$name,'public');
+        //Crear carpeta productos, pasar el archivo(file), el nombre con el que
+        //se guardara y tipo de storage
+       
         return $name;
     }
 }
