@@ -9,6 +9,8 @@ class Producto extends Model
 {
     use HasFactory;
 
+    protected $fillable = ['codigo','nombre','descripcion','fecha_vencimiento','marca_id','presentacione_id','img_path'];
+
     public function compras(){
         return $this->belongsToMany(Compra::class)->withTimestamps()
         ->withPivot('cantidad','precio_compra','precio_venta');
@@ -26,5 +28,15 @@ class Producto extends Model
     }
     public function presentacione(){
         return $this->belongsTo(Presentacione::class);
+    }
+
+    //Normalmnte se hace en una clase de servicio
+    public function handleUploadImage($image){
+        //Gestionar todo lo que tenga que ver con el guardado de la img
+        $file = $image;
+        $name = time().$file->getClientOriginalName();
+        $file->move(public_path().'/img/productos/',$name);//Poner los / para que no de algun error
+
+        return $name;
     }
 }
