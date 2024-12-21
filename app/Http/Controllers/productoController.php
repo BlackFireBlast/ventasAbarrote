@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProductRequest;
+use App\Http\Requests\UpdateProductoRequest;
 use App\Models\Categoria;
 use App\Models\Marca;
 use App\Models\Presentacione;
@@ -10,6 +11,8 @@ use App\Models\Producto;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use PhpParser\Node\Stmt\TryCatch;
 
 class productoController extends Controller
 {
@@ -115,9 +118,25 @@ class productoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Producto $producto)
     {
-        //
+        $marcas = Marca::join('caracteristicas as c', 'marcas.caracteristica_id','=','c.id')
+        ->select('marcas.id as id','c.nombre as nombre')
+        ->where('c.estado',1)
+        ->get();
+        // dd($marcas);
+
+        $presentaciones = Presentacione::join('caracteristicas as c','presentaciones.caracteristica_id','=','c.id')
+        ->select('presentaciones.id as id','c.nombre as nombre')
+        ->where('c.estado',1)
+        ->get();
+
+        $categorias = Categoria::join('caracteristicas as c', 'categorias.caracteristica_id','=','c.id')
+        ->select('categorias.id as id','c.nombre as nombre')
+        ->where('c.estado',1)
+        ->get();
+        // dd($categorias);
+        return view('producto.edit',compact('producto','marcas','presentaciones','categorias'));
     }
 
     /**
@@ -127,9 +146,50 @@ class productoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateProductoRequest $request,Producto $producto)
     {
-        //
+        // dd('Hola');
+
+        try {
+            DB::beginTransaction();
+
+             //Tabla producto
+            
+             if($request->hasFile('img_path')){
+                 $name = $producto->handleUploadImage($request->file('img_path'));
+                 //Eliminar si existe una imagen
+                 if(Storage::disk('public')->exists('productos/'.$producto->img_path)){
+                    Storage::disk('public')->delete('productos/'.$producto->img_path);
+                 }
+             }else{
+                 $name = $producto->img_path;
+             }
+ 
+             $producto->fill([
+                 'codigo' => $request->codigo,
+                 'nombre' => $request->nombre,
+                 'descripcion' => $request->descripcion,
+                 'fecha_vencimiento' => $request->fecha_vencimiento,
+                 'img_path' => $name,
+                 'marca_id' => $request->marca_id,
+                 'presentacione_id' => $request->presentacione_id
+             ]);
+             $producto->save();
+ 
+             //Llenar la Tabla categoría producto
+             $categorias = $request->get('categorias');//Guardar el arreglo categorias
+             $producto->categorias()->sync($categorias);//Sync elimina todas las categorias del producto y luego añade
+              //las nuevas categorias
+ 
+           
+           
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+        }
+
+        return redirect()->route('productos.index')->with('success','Producto editado');
     }
 
     /**
@@ -138,8 +198,15 @@ class productoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(string $id)
     {
-        //
+        $producto = Producto::find($id);
+        $estado = $producto->estado == 1 ? 0 : 1;
+        $message = $estado == 1 ? 'Producto restaurado': 'Producto eliminado';
+        Producto::where('id', $producto->id)
+        ->update([
+            'estado'=> $estado
+        ]);
+        return redirect()->route('productos.index')->with('success',$message);
     }
 }
