@@ -11,7 +11,7 @@ class Documento extends Model
     use HasFactory;
 
     public function persona(){
-        return $this->hasOne(Persona::class);
+        return $this->hasMany(Persona::class);
     }
 
 

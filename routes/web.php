@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\categoriaController;
+use App\Http\Controllers\clienteController;
 use App\Http\Controllers\productoController;
 use Illuminate\Support\Facades\Route;
 
@@ -26,6 +27,7 @@ Route::view('/panel', 'panel.index')->name('panel');
 Route::resources([
 'categorias'=> categoriaController::class,
 'productos' => productoController::class,
+'clientes' => clienteController::class,
 ]);
 
 Route::get('/login', function () {

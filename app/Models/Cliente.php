@@ -9,6 +9,8 @@ class Cliente extends Model
 {
     use HasFactory;
 
+    protected $fillable =['persona_id'];
+
     public function persona(){
         return $this->belongsTo(Persona::class);
     }

@@ -62,6 +62,10 @@
                     <div class="sb-nav-link-icon"><i class="fa-brands fa-product-hunt"></i></div>
                     Productos
                 </a>
+                <a class="nav-link" href="{{ route('clientes.index')}}">
+                    <div class="sb-nav-link-icon"><i class="fa-solid fa-users"></i></div>
+                    Clientes
+                </a>
 
                 <a class="nav-link" href="#">
                     <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
