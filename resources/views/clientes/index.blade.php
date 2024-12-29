@@ -56,71 +56,85 @@ Toast.fire({
             <thead>
                 <tr>
                     <th>Nombre</th>
-                    <th>Descripción</th>
+                    <th>Dirección</th>
+                    <th>Documento(Tipo y Número)</th>
+                    <th>Tipo de persona</th>
                     <th>Estado</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
-         {{--  
+         
             <tbody>
-                @foreach ($categorias as $categoria)
-                <tr>
-                    <td>{{$categoria->caracteristica->nombre}}</td>
-                    <td>{{$categoria->caracteristica->descripcion}}</td> 
+              @foreach ($clientes as $item)
+                  <tr>
                     <td>
-                      @if ($categoria->caracteristica->estado == 1)
-                        <span class="fw-bolder p-1 rounded bg-success text-white ">Activo</span>
-                          
-                      @else
-                      <span class="fw-bolder p-1 rounded bg-danger text-white ">Eliminado</span>
+                      {{$item->persona->razon_social}}
+                    </td>
+                    <td>
+                      {{$item->persona->direccion}}
+                    </td>
+                  
+                    <td>
+                      <p class="fw-normal mb-1">{{$item->persona->documento->tipo_documento}}</p>
+                      <p class="text-muted mb-0">{{$item->persona->numero_documento}}</p>
 
+                    </td>
+                    <td>
+                      {{$item->persona->tipo_persona}}
+                    </td>
+                    <td>
+                      @if ($item->persona->estado == 1)
+                          <span class="badge rounded-pill text-bg-success d-inline">Activo</span>
+                      @else
+                      <span class="badge rounded-pill text-bg-danger d-inline">Eliminado</span>
                       @endif
                     </td>
                     <td>
-                        <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-                            <form action="{{ route('categorias.edit',['categoria'=>$categoria]) }}">
-                                
-                                <button type="submit" class="btn btn-warning"> Editar</button>
-                            </form>
-
-                            @if ($categoria->caracteristica->estado == 1)
-                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmModal-{{$categoria->id}}"> Eliminar</button>
-                            @else
-                            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#confirmModal-{{$categoria->id}}"> Restaurar</button>
-                            @endif
+                      <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                        <form action="{{ route('clientes.edit',['cliente'=>$item]) }}">
                             
-                        </div>
-                    </td>                  
-                </tr>
+                            <button type="submit" class="btn btn-warning"> Editar</button>
+                        </form>
 
-                <!-- Modal -->
-<div class="modal fade" id="confirmModal-{{$categoria->id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel">Mensaje de confirmación</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          {{ $categoria->caracteristica->estado == 1 ? "Seguro que quieres eliminar la categoría?" : "Seguro que quieres restaurar la categoría?" }}
-           
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-          <form action="{{ route('categorias.destroy', ['categoria'=> $categoria->id])}}" method="POST">
-            @method("DELETE")
-            @csrf
-            <button type="submit" class="btn btn-danger">Confirmar</button>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-                @endforeach
+                        @if ($item->persona->estado == 1)
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmModal-{{$item->id}}"> Eliminar</button>
+                        @else
+                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#confirmModal-{{$item->id}}"> Restaurar</button>
+                        @endif
+                        
+                      </div>
+                    </td>
+                  </tr>
 
-              
+                  {{-- Modal confirmación para eliminar --}}
+                <div class="modal fade" id="confirmModal-{{$item->id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Mensaje de confirmación</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        {{ $item->persona->estado == 1 ? "Seguro que quieres eliminar el cliente?" : "Seguro que quieres restaurar el cliente?" }}
+                        
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <form action="{{ route('clientes.destroy', ['cliente'=> $item->persona->id])}}" method="POST">
+                          @method("DELETE")
+                          @csrf
+                          <button type="submit" class="btn btn-danger">Confirmar</button>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+    
+              @endforeach
+            
+      
             </tbody>
---}}
+
 
         </table>
     </div>

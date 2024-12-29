@@ -3,12 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StorePersonaRequest;
+use App\Http\Requests\UpdateClienteRequest;
 use App\Models\Documento;
+use App\Models\Cliente;
 use App\Models\Persona;
 use Illuminate\Support\Facades\DB;
 use Exception;
 use Illuminate\Http\Request;
 use PhpParser\Node\Stmt\TryCatch;
+use Spatie\FlareClient\Http\Client;
 
 class clienteController extends Controller
 {
@@ -19,7 +22,9 @@ class clienteController extends Controller
      */
     public function index()
     {
-        return view('clientes.index');
+        $clientes = Cliente::with('persona.documento')->get();
+        // dd($clientes);
+        return view('clientes.index',compact('clientes'));
     }
 
     /**
@@ -72,9 +77,12 @@ class clienteController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Cliente $cliente)
     {
-        //
+        //Cargar la relacion de cliente con persona y la relación persona con cliente
+        $cliente->load('persona.documento');
+        $documentos = Documento::all();
+        return view('clientes.edit',compact('cliente','documentos'));
     }
 
     /**
@@ -84,9 +92,18 @@ class clienteController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateClienteRequest $request, Cliente $cliente)
     {
-        //
+        try {
+            DB::beginTransaction();
+            Persona::where('id',$cliente->persona->id)->update($request->validated());
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+        }
+
+        return redirect()->route('clientes.index')->with('success','Cliente editado');
+    
     }
 
     /**
@@ -97,6 +114,14 @@ class clienteController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $producto = Persona::find($id);
+        $estado = $producto->estado == 1 ? 0 : 1;
+        $message = $estado == 1 ? 'Cliente restaurado': 'Cliente eliminado';
+        Persona::where('id', $producto->id)
+        ->update([
+            'estado'=> $estado
+        ]);
+        return redirect()->route('clientes.index')->with('success',$message);
+    
     }
 }
