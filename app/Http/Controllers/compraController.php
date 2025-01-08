@@ -20,7 +20,12 @@ class compraController extends Controller
      */
     public function index()
     {
-        return view('compra.index');
+        $compras = Compra::with('comprobante', 'proveedore.persona')
+        ->where('estado',1)
+        ->latest()
+        ->get();
+
+        return view('compra.index',compact('compras'));
     }
 
     /**
@@ -109,9 +114,9 @@ class compraController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Compra $compra)
     {
-        //
+        return view('compra.show', compact('compra'));
     }
 
     /**
@@ -145,6 +150,12 @@ class compraController extends Controller
      */
     public function destroy($id)
     {
-        //
+        Compra::where('id',$id)
+        ->update([
+            'estado'=> 0
+        ]);
+
+        return redirect()->route('compras.index')->with('success','Compra eliminada');
+        
     }
 }

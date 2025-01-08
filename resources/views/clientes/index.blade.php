@@ -106,7 +106,7 @@ Toast.fire({
                     </td>
                   </tr>
 
-                  {{-- Modal confirmación para eliminar --}}
+                {{-- Modal confirmación para eliminar --}}
                 <div class="modal fade" id="confirmModal-{{$item->id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                   <div class="modal-dialog">
                     <div class="modal-content">
