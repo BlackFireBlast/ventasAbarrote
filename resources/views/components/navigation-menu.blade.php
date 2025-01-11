@@ -68,6 +68,7 @@
                 </a>
 
 
+                {{-- Compras --}}
                 <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
                     <div class="sb-nav-link-icon"><i class="fa-solid fa-store"></i></div>
                     Compras
@@ -77,6 +78,20 @@
                     <nav class="sb-sidenav-menu-nested nav">
                         <a class="nav-link" href="{{route('compras.index')}}">Ver</a>
                         <a class="nav-link" href="{{route('compras.create')}}">Crear</a>
+                    </nav>
+                </div>
+
+                
+                {{-- Ventas --}}
+                <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseVentas" aria-expanded="false" aria-controls="collapseLayouts">
+                    <div class="sb-nav-link-icon"><i class="fa-solid fa-cart-shopping"></i></div>
+                    Ventas
+                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                </a>
+                <div class="collapse" id="collapseVentas" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                    <nav class="sb-sidenav-menu-nested nav">
+                        <a class="nav-link" href="{{route('ventas.index')}}">Ver</a>
+                        <a class="nav-link" href="{{route('ventas.create')}}">Crear</a>
                     </nav>
                 </div>
 

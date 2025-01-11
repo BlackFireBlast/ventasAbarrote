@@ -4,6 +4,7 @@ use App\Http\Controllers\categoriaController;
 use App\Http\Controllers\clienteController;
 use App\Http\Controllers\compraController;
 use App\Http\Controllers\productoController;
+use App\Http\Controllers\ventaController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -30,6 +31,7 @@ Route::resources([
 'productos' => productoController::class,
 'clientes' => clienteController::class,
 'compras' => compraController::class,
+'ventas' => ventaController::class,
 ]);
 
 Route::get('/login', function () {
