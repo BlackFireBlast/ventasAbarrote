@@ -16,6 +16,12 @@ use PhpParser\Node\Stmt\TryCatch;
 
 class productoController extends Controller
 {
+    function __construct() {
+        $this->middleware('permission:ver-producto|crear-producto|editar-producto|eliminar-producto',['only' => ['index']]);
+        $this->middleware('permission:crear-producto',['only' => ['create','store']]);
+        $this->middleware('permission:editar-producto',['only' => ['edit','update']]);
+        $this->middleware('permission:eliminar-producto',['only' => ['destroy']]);
+    }
     /**
      * Display a listing of the resource.
      *
