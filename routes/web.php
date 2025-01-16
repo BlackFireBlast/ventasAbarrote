@@ -7,6 +7,7 @@ use App\Http\Controllers\homeController;
 use App\Http\Controllers\loginController;
 use App\Http\Controllers\logoutController;
 use App\Http\Controllers\productoController;
+use App\Http\Controllers\profileController;
 use App\Http\Controllers\roleController;
 use App\Http\Controllers\userController;
 use App\Http\Controllers\ventaController;
@@ -42,7 +43,8 @@ Route::resources([
 'compras' => compraController::class,
 'ventas' => ventaController::class,
 'roles' => roleController::class,
-'users' => userController::class
+'users' => userController::class,
+'profile' => profileController::class
 ]);
 
 
